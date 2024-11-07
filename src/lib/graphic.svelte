@@ -19,7 +19,7 @@
     });
 
     function drawChart() {
-        const margin = { top: 20, right: 30, bottom: 40, left: 40};
+        const margin = { top: 20, right: 30, bottom: 40, left: 100};
         const width = 800 - margin.left - margin.right;
         const height = 400 - margin.top - margin.bottom;
 
@@ -60,6 +60,9 @@
             .nice()
             .range([height, 0]);
 
+        //define $ billions format
+        const formatB = d3.format("$.2s");
+
         //create stacked layout
         const stack = d3.stack()
             .keys(currentOffTypes)
@@ -98,7 +101,7 @@
 
         svg.append('g')
             .attr('class', 'y-axis')
-            .call(d3.axisLeft(y));
+            .call(d3.axisLeft(y).tickFormat(d => formatB(d).replace("G", "B")));
     }
 
     //dropdown change
