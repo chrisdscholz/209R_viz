@@ -9,9 +9,9 @@
     //define color mapping list
     const colorMap = {
         // "All": "#1f77b4",
-        "H": "#ff7f0e",
-        "S": "#2ca02c",
-        "P": "#d62728"
+        "House": "#ff7f0e",
+        "Senate": "#2ca02c",
+        "President": "#d62728"
     };
 
     //load and process data
