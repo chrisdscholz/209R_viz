@@ -6,6 +6,14 @@
     let selectedOffType = "All";
     let offTypes = [];
     
+    //define color mapping list
+    const colorMap = {
+        // "All": "#1f77b4",
+        "H": "#ff7f0e",
+        "S": "#2ca02c",
+        "P": "#d62728"
+    };
+
     //load and process data
     onMount(async () => {
         data = await d3.csv('/FEC_Spend_Data.csv', d => ({
@@ -19,9 +27,12 @@
     });
 
     function drawChart() {
-        const margin = { top: 20, right: 30, bottom: 40, left: 100};
-        const width = 800 - margin.left - margin.right;
-        const height = 400 - margin.top - margin.bottom;
+        const margin = { top: 20, right: 30, bottom: 40, left: 80};
+        const width = 1000 - margin.left - margin.right;
+        const height = 700 - margin.top - margin.bottom;
+
+        //define color
+        const tColor = (offType) => colorMap[offType] || "#ccc";
 
         //dynamic query filter
         const filteredData = selectedOffType === "All" ? data: data.filter(d => d.offType === selectedOffType);
@@ -65,7 +76,7 @@
 
         //create stacked layout
         const stack = d3.stack()
-            .keys(currentOffTypes)
+            .keys(Object.keys(colorMap))
             .value((d, key) => d[key] || 0)
 
         const layers = stack(stackedData);
@@ -84,14 +95,22 @@
         svg.selectAll('.layer')
             .data(layers)
             .join('g')
-            .attr('fill', d => color(d.key))
+            .attr('fill', d => tColor(d.key))
             .selectAll('rect')
             .data(d => d)
             .join('rect')
             .attr('x', d => x(d.data.year))
+            .attr('width', x.bandwidth())
+            .attr('y', height)//
+            .transition()//
+            .duration(500)//
+            .delay((d, i) => i * 100)
+            // .ease(d3.easeBounce)
+            // .ease(d3.easeCubic)//
+            // .attr('x', d => x(d.data.year))
             .attr('y', d => y(d[1]))
-            .attr('height', d => y(d[0]) - y(d[1]))
-            .attr('width', x.bandwidth());
+            .attr('height', d => y(d[0]) - y(d[1]));
+            // .attr('width', x.bandwidth());
 
         //draw axes
         svg.append('g')
@@ -102,6 +121,63 @@
         svg.append('g')
             .attr('class', 'y-axis')
             .call(d3.axisLeft(y).tickFormat(d => formatB(d).replace("G", "B")));
+
+        //draw legend container
+        const legend = svg.append('g')
+            .attr('class', 'legend')
+            .attr('transform', `translate(40, 30)`);
+
+        //create legend items
+        legend.selectAll('legend-item')
+            .data(Object.keys(colorMap))
+            .join('g')
+            .attr('class', 'legend-item')
+            .attr('transform', (d, i) => `translate(0, ${i * 20})`)
+            .each(function(d) {
+                const legendItem = d3.select(this);
+
+                //color square
+                legendItem.append('rect')
+                    .attr('x', 0)
+                    .attr('y', 0)
+                    .attr('width', 15)
+                    .attr('height', 15)
+                    .attr('fill', tColor(d));
+                
+                //label
+                legendItem.append('text')
+                    .attr('x', 20)
+                    .attr('y', 12)
+                    .text(d)
+                    .style('font-size', '12px')
+                    .attr('alignment-baseline', 'middle');
+            });
+
+        //chart title
+        svg.append('text')
+            .attr('x', width / 2)
+            .attr('y', -margin.top / 4)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '16px')
+            .style('font-weight', 'bold')
+            .text('How much is spent on federal election campaigns?');
+
+        //x axis title
+        svg.append('text')
+            .attr('x', width / 2)
+            .attr('y', height + margin.bottom)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '16px')
+            .text('Election Year');
+
+        //y axis title
+        svg.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('x', -height / 2)
+            .attr('y', -margin.left + 20)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '16px')
+            .text('Spend (in billions)');
     }
 
     //dropdown change
@@ -164,7 +240,7 @@
 
 
 <div>
-    <label for="type-select">Select Office Type:</label>
+    <label for="type-select">Elected Office Type:</label>
     <select id="type-select" bind:value={selectedOffType} on:change={handleOffTypeChange}>
         <option value="All">All</option>
         {#each offTypes as offType}
