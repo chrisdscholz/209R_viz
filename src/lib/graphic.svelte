@@ -170,7 +170,7 @@
             .attr('text-anchor', 'middle')
             .style('font-size', '12px')
             .style('font-weight', 'bold')
-            .text('Federal Election Commission Reported Spend - Elections Years 2004-2024');
+            .text('Federal Election Commission Reported Spend - Election Years 2004-2024');
 
         //x axis title
         svg.append('text')

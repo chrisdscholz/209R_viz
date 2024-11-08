@@ -1,0 +1,31 @@
+﻿How has federal election spending changed over time? This question spurred our decision to dive into the Federal Election Commission (FEC) data on federal election campaign spend and see what insights we could discover.
+
+
+Design rationale.
+
+
+Following a brief exploratory analysis using a sample of the full dataset, we decided to visualize federal election campaign spend by office type, i.e. house, senate, and president. Our interactivity would center on the ability to dynamically query which office type to visualize at any given time. We explored bar charts, line charts, and area charts. Ultimately we landed on a bar chart, given that we felt for this particular dataset and question, it allowed the best combination of period-to-period comparison and single-period analysis. Further, we explored both stacked and grouped bar chart styles, in the end deciding on a stacked style to better show the full total of any given type queried in our dynamic query interaction. We encoded office types to color and designed a layout with election years on the x-axis, and committee spend on the y-axis. Our interaction was to be centered on a dropdown box that would query different political office types and display the results dynamically.
+
+
+Development process.
+
+
+With the design completed, we moved to implementation. First was data retrieval and transformation. The FEC website provides a wealth of data around federal elections. Regarding political committee spend, there are several data files that need to be pulled, combined, cleaned, and transformed to derive committee spend by candidate. This involves retrieving each specific period spend report, retrieving the header file separately, combining, and then repeating the process for committee and candidate demographic data before merging the datasets, retaining only the desired fields, and performing any necessary transformations. This task was handled completely in python using pandas dataframes and direct URL links to the FEC website. The end result of the python code is an exported csv file.
+
+
+Next, the development process switched to d3.js and svelte. Using svelte, we created the skeleton of a webpage, and a component to house our d3 visual. We then created our visualization component piece-by-piece, checking progress via our local live server along the way. A simple bar chart was implemented first, and then we added color encodings, stacking, annotations, interactions, and transitions iteratively. Finally, we published our svelte project to github pages to create the live URL of our visualization.
+
+
+Time investment.
+
+
+This was a solo project, so all steps were completed myself.
+Exploratory analysis and design: ~2 hours
+Data ETL: ~4 hours
+Visualization in d3.js with svelte: ~4 hours
+
+
+Findings.
+
+
+Overall, our visualization showed that federal election spending has increased dramatically in recent election cycles. The 2020 election cycle dwarfed prior cycles, with the presidential election responsible for the lion's share of that growth. However, both house and senate elections show steady spend growth as well. Given that reporting to the FEC lags actual spend by some time, the 2024 cycle only shows a partial glimpse of total committee spend, but it is already on track to meet or exceed the 2020 total. Based on this, we can assume that political committee spending on federal elections will only continue to balloon in the future.
