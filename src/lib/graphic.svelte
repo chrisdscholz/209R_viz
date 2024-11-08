@@ -11,7 +11,8 @@
         // "All": "#1f77b4",
         "House": "#ff7f0e",
         "Senate": "#2ca02c",
-        "President": "#d62728"
+        //"President": "#d62728"
+        "President": "#1f77b4"
     };
 
     //load and process data
@@ -27,7 +28,7 @@
     });
 
     function drawChart() {
-        const margin = { top: 20, right: 30, bottom: 40, left: 80};
+        const margin = { top: 40, right: 30, bottom: 100, left: 80};
         const width = 1000 - margin.left - margin.right;
         const height = 700 - margin.top - margin.bottom;
 
@@ -125,7 +126,7 @@
         //draw legend container
         const legend = svg.append('g')
             .attr('class', 'legend')
-            .attr('transform', `translate(40, 30)`);
+            .attr('transform', `translate(40, 10)`);
 
         //create legend items
         legend.selectAll('legend-item')
@@ -156,16 +157,25 @@
         //chart title
         svg.append('text')
             .attr('x', width / 2)
-            .attr('y', -margin.top / 4)
+            .attr('y', -margin.top / 2)
             .attr('text-anchor', 'middle')
-            .style('font-size', '16px')
+            .style('font-size', '18px')
             .style('font-weight', 'bold')
-            .text('How much is spent on federal election campaigns?');
+            .text('How has federal election campaign spending changed over time?');
+
+        //chart sub title
+        svg.append('text')
+            .attr('x', width / 2)
+            .attr('y', 0)
+            .attr('text-anchor', 'middle')
+            .style('font-size', '12px')
+            .style('font-weight', 'bold')
+            .text('Federal Election Commission Reported Spend - Elections Years 2004-2024');
 
         //x axis title
         svg.append('text')
             .attr('x', width / 2)
-            .attr('y', height + margin.bottom)
+            .attr('y', height + margin.bottom - 60)
             .attr('text-anchor', 'middle')
             .attr('font-size', '16px')
             .text('Election Year');
@@ -178,6 +188,21 @@
             .attr('text-anchor', 'middle')
             .style('font-size', '16px')
             .text('Spend (in billions)');
+
+        //chart sub notes
+        svg.append('text')
+            .attr('x', 0)
+            .attr('y', height + margin.bottom - 30)
+            .attr('text-anchor', 'left')
+            .attr('font-size', '12px')
+            .text('(1) Only includes election committee spend attributed to a specific candidate');
+
+        svg.append('text')
+            .attr('x', 0)
+            .attr('y', height + margin.bottom - 10)
+            .attr('text-anchor', 'left')
+            .attr('font-size', '12px')
+            .text('(2) Only includes spend that has been reported to the Federal Elections Commission - very recent election cycles may not be fully reported');
     }
 
     //dropdown change
