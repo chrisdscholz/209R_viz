@@ -8,10 +8,8 @@
     
     //define color mapping list
     const colorMap = {
-        // "All": "#1f77b4",
         "House": "#ff7f0e",
         "Senate": "#2ca02c",
-        //"President": "#d62728"
         "President": "#1f77b4"
     };
 
@@ -106,12 +104,8 @@
             .transition()//
             .duration(500)//
             .delay((d, i) => i * 100)
-            // .ease(d3.easeBounce)
-            // .ease(d3.easeCubic)//
-            // .attr('x', d => x(d.data.year))
             .attr('y', d => y(d[1]))
             .attr('height', d => y(d[0]) - y(d[1]));
-            // .attr('width', x.bandwidth());
 
         //draw axes
         svg.append('g')
@@ -210,59 +204,7 @@
         selectedOffType = event.target.value;
         drawChart();
     }
-
-    //     const svg = d3.select('#chart')
-    //         .attr('width', width + margin.left + margin.right)
-    //         .attr('height', height + margin.top + margin.bottom)
-    //         .append('g')
-    //         .attr('transform', `translate(${margin.left}, ${margin.top})`);
-        
-    //     //define scale
-    //     const x = d3.scaleBand()
-    //         .domain(filteredData.map(d => d.year))
-    //         .range([0, width])
-    //         .padding(0.1);
-
-    //     const y = d3.scaleLinear()
-    //         .domain([0, d3.max(filteredData, d => d.spend)])
-    //         .nice()
-    //         .range([height, 0]);
-
-    //     //draw bars
-    //     svg.selectAll('.bar')
-    //         .data(filteredData)
-    //         .enter().append('rect')
-    //         .attr('class', 'bar')
-    //         .attr('x', d => x(d.year))
-    //         .attr('y', d => y(d.spend))
-    //         .attr('width', x.bandwidth())
-    //         .attr('height', d => height - y(d.spend))
-    //         .attr('fill', 'steelblue');
-        
-    //     //draw axes
-    //     svg.append('g')
-    //         .attr('class', 'x-axis')
-    //         .attr('transform', `translate(0, ${height})`)
-    //         .call(d3.axisBottom(x));
-
-    //     svg.append('g')
-    //         .attr('class', 'y-axis')
-    //         .call(d3.axisLeft(y));
-    // }
-
-    // //dropdown change
-    // function handleOffTypeChange(event) {
-    //     selectedOffType = event.target.value;
-    //     d3.select('#chart').selectAll('*').remove();
-    //     drawChart();
-    // }
 </script>
-
-
-<style>
-
-</style>
-
 
 <div>
     <label for="type-select">Elected Office Type:</label>
