@@ -8,8 +8,7 @@
 
 <Graphic />
 
-<p>Project Github Repo</p>
-<a href='https://github.com/chrisdscholz/209R_viz' target="_blank">LINK</a>
+<p>Project Github Repo: <a href='https://github.com/chrisdscholz/209R_viz' target="_blank">LINK</a></p>
 
 <h3>Project Writeup</h3>
 
