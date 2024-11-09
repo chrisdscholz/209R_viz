@@ -6,7 +6,7 @@
 
 <h3>209R Project 3 Visualization - Chris Scholz</h3>
 
-<Graphic />
+<!-- <Graphic /> -->
 
 <h3>Project Writeup</h3>
 
