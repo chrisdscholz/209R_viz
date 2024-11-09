@@ -3,7 +3,7 @@
     let content = '';
 
     onMount(async () => {
-        const response = await fetch('/Project3_Writeup.txt');
+        const response = await fetch('./Project3_Writeup.txt');
         content = await response.text();
     })
 </script>

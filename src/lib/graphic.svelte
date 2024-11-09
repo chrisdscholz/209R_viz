@@ -15,7 +15,7 @@
 
     //load and process data
     onMount(async () => {
-        data = await d3.csv('/FEC_Spend_Data.csv', d => ({
+        data = await d3.csv('./FEC_Spend_Data.csv', d => ({
             year: +d.CAND_ELECTION_YR,
             offType: d.CAND_OFFICE,
             spend: +d.TRANSACTION_AMT
