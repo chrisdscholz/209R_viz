@@ -1,5 +1,5 @@
 <script>
-    import Graphic from '$lib/graphic.svelte';
+    // import Graphic from '$lib/graphic.svelte';
     import Writeup from '$lib/writeup.svelte';
 </script>
 
