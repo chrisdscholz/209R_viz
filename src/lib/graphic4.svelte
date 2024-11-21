@@ -1,4 +1,7 @@
 <script>
-    
+
+    function drawChart() {
+        
+    }
 
 </script>
