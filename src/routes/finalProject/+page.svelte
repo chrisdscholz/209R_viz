@@ -1,15 +1,5 @@
 <script>
-    import Graphic from '$lib/graphic.svelte';
-    import Writeup from '$lib/writeup.svelte';
+    import Graphic4 from '$lib/graphic4.svelte';
 </script>
 
-
-<h3>209R Project 3 Visualization - Chris Scholz</h3>
-
-<Graphic />
-
-<p>Project Github Repo: <a href='https://github.com/chrisdscholz/209R_viz' target="_blank">LINK</a></p>
-
-<h3>Project Writeup</h3>
-
-<Writeup />
+<Graphic4 />
