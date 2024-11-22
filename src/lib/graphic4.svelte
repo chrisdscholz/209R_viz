@@ -44,34 +44,77 @@
         const record = data.find(d => d.id === id);
         if (!record) return;
 
-        //define nodes and links
-        const graph = {
-            nodes: [
-                { name: 'Interest Revenue' },
-                { name: 'Non-Interest Revenue' },
-                { name: 'Non-Interest Expense' },
-                { name: 'Interest Expense'},
-                { name: 'Revenue' },
-                { name: 'Operating Income'},
-                { name: 'Other Expense'},
-                { name: 'Net Income' }
-            ],
-            links: [
-                { source: 'Interest Revenue', target: 'Revenue', value: record.netIntRev},
-                { source: 'Non-Interest Revenue', target: 'Revenue', value: record.nonIntRev },
-                { source: 'Interest Revenue', target: 'Interest Expense', value: record.intRev - record.netIntRev},
-                { source: 'Revenue', target: 'Non-Interest Expense', value: record.exp },
-                { source: 'Revenue', target: 'Operating Income', value: record.netIntRev + record.nonIntRev - record.exp },
-                { source: 'Operating Income', target: 'Other Expense', value: record.netIntRev + record.nonIntRev - record.exp - record.netInc },
-                { source: 'Operating Income', target: 'Net Income', value: record.netInc }
-            ]
-        };
+        // //define nodes and links
+        // const graph = {
+        //     nodes: [
+        //         { name: 'Interest Revenue' },
+        //         { name: 'Non-Interest Revenue' },
+        //         { name: 'Non-Interest Expense' },
+        //         { name: 'Interest Expense'},
+        //         { name: 'Revenue' },
+        //         { name: 'Operating Income'},
+        //         { name: 'Other Expense'},
+        //         { name: 'Net Income' }
+        //     ],
+        //     links: [
+        //         { source: 'Interest Revenue', target: 'Revenue', value: record.netIntRev},
+        //         { source: 'Non-Interest Revenue', target: 'Revenue', value: record.nonIntRev },
+        //         { source: 'Interest Revenue', target: 'Interest Expense', value: record.intRev - record.netIntRev},
+        //         { source: 'Revenue', target: 'Non-Interest Expense', value: record.exp },
+        //         { source: 'Revenue', target: 'Operating Income', value: record.netIntRev + record.nonIntRev - record.exp },
+        //         { source: 'Operating Income', target: 'Other Expense', value: record.netIntRev + record.nonIntRev - record.exp - record.netInc },
+        //         { source: 'Operating Income', target: 'Net Income', value: record.netInc }
+        //     ]
+        // };
 
-        // Map source and target names to node indices
-        graph.links.forEach(link => {
-            link.source = graph.nodes.findIndex(d => d.name === link.source);
-            link.target = graph.nodes.findIndex(d => d.name === link.target);
-        });
+        //define nodes and links
+
+        let nodes = [
+            { name: 'Interest Revenue' },
+            { name: 'Non-Interest Revenue' },
+            { name: 'Non-Interest Expense' },
+            { name: 'Interest Expense'},
+            { name: 'Revenue' },
+            { name: 'Operating Income'},
+            { name: 'Other Expense'},
+            { name: 'Net Income' }
+        ];
+
+        let links = [
+            { source: 'Interest Revenue', target: 'Revenue', value: record.netIntRev},
+            { source: 'Non-Interest Revenue', target: 'Revenue', value: record.nonIntRev },
+            { source: 'Interest Revenue', target: 'Interest Expense', value: record.intRev - record.netIntRev},
+            { source: 'Revenue', target: 'Non-Interest Expense', value: record.exp },
+            { source: 'Revenue', target: 'Operating Income', value: record.netIntRev + record.nonIntRev - record.exp },
+            { source: 'Operating Income', target: 'Other Expense', value: record.netIntRev + record.nonIntRev - record.exp - record.netInc },
+            { source: 'Operating Income', target: 'Net Income', value: record.netInc }
+        ];
+
+
+        //filter out links with zero values
+        links = links.filter(link => link.value > 0);
+
+        // // Map source and target names to node indices
+        // graph.links.forEach(link => {
+        //     link.source = graph.nodes.findIndex(d => d.name === link.source);
+        //     link.target = graph.nodes.findIndex(d => d.name === link.target);
+        // });
+
+        //determine nodes to retain based on filtered links
+        const connectedNodeNames = new Set ();
+        links.forEach(link => {
+            connectedNodeNames.add(link.source);
+            connectedNodeNames.add(link.target);
+        })
+
+        //filter unused nodes
+        nodes = nodes.filter(node => connectedNodeNames.has(node.name));
+
+        //map source and targets to nodes
+        links.forEach(link => {
+            link.source = nodes.findIndex(d => d.name === link.source);
+            link.target = nodes.findIndex(d => d.name === link.target);
+        })
 
         const svg = d3.select('svg')
             .attr('width', width)
@@ -86,16 +129,22 @@
             .nodePadding(20)
             .extent([[0, 0], [width, height]]);
         
+        // //define sankey with given nodes/links defined above
+        // const { nodes, links } = sankeyGenerator({
+        //     nodes: graph.nodes.map(d => ({ ...d })),
+        //     links: graph.links.map(d => ({ ...d }))
+        // });
+
         //define sankey with given nodes/links defined above
-        const { nodes, links } = sankeyGenerator({
-            nodes: graph.nodes.map(d => ({ ...d })),
-            links: graph.links.map(d => ({ ...d }))
+        const { nodes: sankeyNodes, links: sankeyLinks } = sankeyGenerator({
+            nodes: nodes.map(d => ({ ...d })),
+            links: links.map(d => ({ ...d }))
         });
 
         //draw links
         svg.append('g')
             .selectAll('path')
-            .data(links)
+            .data(sankeyLinks)
             .join('path')
             .attr('d', sankeyLinkHorizontal())
             .attr('fill', 'none')
@@ -106,7 +155,7 @@
         //draw nodes
         svg.append('g')
             .selectAll('rect')
-            .data(nodes)
+            .data(sankeyNodes)
             .join('rect')
             .attr('x', d => d.x0)
             .attr('y', d => d.y0)
@@ -118,7 +167,7 @@
         //add node labels
         svg.append('g')
             .selectAll('text')
-            .data(nodes)
+            .data(sankeyNodes)
             .join('text')
             .attr('x', d => d.x0 - 6)
             .attr('y', d => (d.y1 + d.y0) / 2)
