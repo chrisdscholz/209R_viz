@@ -14,7 +14,8 @@
             intRev: +d['Interest Income'],
             nonIntRev: +d['Non-Interest Income'],
             netInc: +d['Net Income'],
-            exp: +d['Non-Interest Expense']
+            exp: +d['Non-Interest Expense'],
+            netIntRev: +d['Net Interest Income']
         }));
 
         data = rawData;
@@ -46,19 +47,27 @@
         //define nodes and links
         const graph = {
             nodes: [
-                { name: 'Interest Income' },
-                { name: 'Non-Interest Income' },
+                { name: 'Interest Revenue' },
+                { name: 'Non-Interest Revenue' },
                 { name: 'Non-Interest Expense' },
+                { name: 'Interest Expense'},
+                { name: 'Revenue' },
+                { name: 'Operating Income'},
+                { name: 'Other Expense'},
                 { name: 'Net Income' }
             ],
             links: [
-                { source: 'Interest Income', target: 'Non-Interest Expense', value: record.intRev },
-                { source: 'Non-Interest Income', target: 'Non-Interest Expense', value: record.nonIntRev },
-                { source: 'Non-Interest Expense', target: 'Net Income', value: record.exp }
+                { source: 'Interest Revenue', target: 'Revenue', value: record.netIntRev},
+                { source: 'Non-Interest Revenue', target: 'Revenue', value: record.nonIntRev },
+                { source: 'Interest Revenue', target: 'Interest Expense', value: record.intRev - record.netIntRev},
+                { source: 'Revenue', target: 'Non-Interest Expense', value: record.exp },
+                { source: 'Revenue', target: 'Operating Income', value: record.netIntRev + record.nonIntRev - record.exp },
+                { source: 'Operating Income', target: 'Other Expense', value: record.netIntRev + record.nonIntRev - record.exp - record.netInc },
+                { source: 'Operating Income', target: 'Net Income', value: record.netInc }
             ]
         };
 
-            // Map source and target names to node indices
+        // Map source and target names to node indices
         graph.links.forEach(link => {
             link.source = graph.nodes.findIndex(d => d.name === link.source);
             link.target = graph.nodes.findIndex(d => d.name === link.target);
@@ -74,7 +83,7 @@
         //define sankey generator
         const sankeyGenerator = sankey()
             .nodeWidth(20)
-            .nodePadding(10)
+            .nodePadding(20)
             .extent([[0, 0], [width, height]]);
         
         //define sankey with given nodes/links defined above
