@@ -292,11 +292,11 @@
     </select>
 </div>
 
-<div>
+<!-- <div>
     <input 
         type="search"
         bind:value="{query}"
         aria-label="Search FIs"
         placeholder="FI name/charter/cert..."
     />
-</div>
+</div> -->
