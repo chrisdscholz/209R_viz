@@ -6,11 +6,13 @@
     //variable definition
     let data = [];
     let selectedID = null;
+    let selectedName = null;
 
     //load and process data
     onMount(async () => {
         const rawData = await d3.csv('./FIData.csv', d => ({
             id: d['Charter/Cert'],
+            fiName: d['Inst Name'],
             intRev: +d['Interest Income'],
             nonIntRev: +d['Non-Interest Income'],
             netInc: +d['Net Income'],
@@ -21,6 +23,7 @@
         data = rawData;
         if (rawData.length > 0) {
             selectedID = rawData[0].id;
+            selectedName = rawData[0].fiName;
             drawChart(selectedID);
             // drawChart('Credit Union_6');
         }
@@ -43,6 +46,8 @@
         //filter selected id
         const record = data.find(d => d.id === id);
         if (!record) return;
+
+        selectedName = record.fiName;
 
         // //define nodes and links
         // const graph = {
@@ -72,7 +77,7 @@
         let nodes = [
             { name: 'Interest Revenue' },
             { name: 'Non-Interest Revenue' },
-            { name: 'Non-Interest Expense' },
+            { name: 'Operating Expense' },
             { name: 'Interest Expense'},
             { name: 'Revenue' },
             { name: 'Operating Income'},
@@ -81,10 +86,18 @@
         ];
 
         let links = [
-            { source: 'Interest Revenue', target: 'Revenue', value: record.netIntRev},
+            // { source: 'Interest Revenue', target: 'Revenue', value: record.netIntRev},
+            // { source: 'Non-Interest Revenue', target: 'Revenue', value: record.nonIntRev },
+            // { source: 'Interest Revenue', target: 'Interest Expense', value: record.intRev - record.netIntRev},
+            // { source: 'Revenue', target: 'Operating Expense', value: record.exp },
+            // { source: 'Revenue', target: 'Operating Income', value: record.netIntRev + record.nonIntRev - record.exp },
+            // { source: 'Operating Income', target: 'Other Expense', value: record.netIntRev + record.nonIntRev - record.exp - record.netInc },
+            // { source: 'Operating Income', target: 'Net Income', value: record.netInc }
+
+            { source: 'Interest Revenue', target: 'Revenue', value: record.intRev},
             { source: 'Non-Interest Revenue', target: 'Revenue', value: record.nonIntRev },
-            { source: 'Interest Revenue', target: 'Interest Expense', value: record.intRev - record.netIntRev},
-            { source: 'Revenue', target: 'Non-Interest Expense', value: record.exp },
+            { source: 'Revenue', target: 'Interest Expense', value: record.intRev - record.netIntRev},
+            { source: 'Revenue', target: 'Operating Expense', value: record.exp },
             { source: 'Revenue', target: 'Operating Income', value: record.netIntRev + record.nonIntRev - record.exp },
             { source: 'Operating Income', target: 'Other Expense', value: record.netIntRev + record.nonIntRev - record.exp - record.netInc },
             { source: 'Operating Income', target: 'Net Income', value: record.netInc }
@@ -141,6 +154,64 @@
             links: links.map(d => ({ ...d }))
         });
 
+        //adjust positioning for midway nodes
+        sankeyNodes.forEach((d, i) => {
+            // if (d.name === 'Operating Expense' || d.name === 'Interest Expense' || d.name === 'Other Expense') {
+            //     // d.x0 = (width / 2) - ((d.x1 - d.x0) / 2);
+            //     d.x0 = (width * 0.9);
+            //     // d.x1 = d.x0 + (d.x1 - d.x0);
+            //     d.x1 = d.x0 + 20;
+            // }
+            if (d.name === 'Operating Income') {
+                // d.x0 = (width / 2) - ((d.x1 - d.x0) / 2);
+                d.x0 = (width * 0.7);
+                // d.x1 = d.x0 + (d.x1 - d.x0);
+                d.x1 = d.x0 + 20;
+            }
+            if (d.name === 'Revenue') {
+                // d.x0 = (width / 2) - ((d.x1 - d.x0) / 2);
+                d.x0 = (width * 0.4);
+                // d.x1 = d.x0 + (d.x1 - d.x0);
+                d.x1 = d.x0 + 20;
+            }
+        });
+
+        //color scale
+        const colorScale = d3.scaleOrdinal()
+            .domain(nodes.map(d => d.name))
+            .range(d3.schemeObservable10);
+
+        //append gradients to svg
+        const defs = svg.append('defs');
+
+        sankeyLinks.forEach((link, i) => {
+            const gradientId = `gradient-${i}`;
+
+            const sourceNode = link.source;
+            const targetNode = link.target;
+            
+            const sourceColor = colorScale(sourceNode.name);
+            const targetColor = colorScale(targetNode.name);
+
+            const gradient = defs.append('linearGradient')
+                .attr('id', gradientId)
+                .attr('gradientUnits', 'userSpaceOnUse')
+                .attr('x1', link.source.x1)
+                .attr('y1', (link.source.y1 + link.source.y0) / 2)
+                .attr('x2', link.target.x0)
+                .attr('y2', (link.target.y1 + link.target.y0) / 2);
+
+            gradient.append('stop')
+                .attr('offset', '0%')
+                .attr('stop-color', sourceColor);
+
+            gradient.append('stop')
+                .attr('offset', '100%')
+                .attr('stop-color', targetColor);
+
+            link.gradientId = gradientId;
+    });
+
         //draw links
         svg.append('g')
             .selectAll('path')
@@ -148,7 +219,9 @@
             .join('path')
             .attr('d', sankeyLinkHorizontal())
             .attr('fill', 'none')
-            .attr('stroke', '#69b3a2')
+            // .attr('stroke', '#69b3a2')
+            // .attr('stroke', d => colorScale(d.source.name))
+            .attr('stroke', d => `url(#${d.gradientId})`)
             .attr('stroke-width', d => Math.max(1, d.width))
             .attr('opacity', 0.7);
 
@@ -161,7 +234,8 @@
             .attr('y', d => d.y0)
             .attr('width', d => d.x1 - d.x0)
             .attr('height', d => d.y1 - d.y0)
-            .attr('fill', '#4682b4')
+            // .attr('fill', '#4682b4')
+            .attr('fill', d => colorScale(d.name))
             .attr('stroke', '#000');
 
         //add node labels
@@ -181,6 +255,8 @@
             .attr('text-anchor', 'start');
     }
 
+
+
 </script>
 
 <style>
@@ -188,6 +264,10 @@
         border: 1px solid #ccc;
     }
 </style>
+
+<div>
+    <p>{selectedName}</p>
+</div>
 
 <div>
     <label for="idSelect">Select ID:</label>
