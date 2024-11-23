@@ -7,6 +7,10 @@
     let data = [];
     let selectedID = null;
     let selectedName = null;
+    let selectedIDTrim = null;
+    let selectedTypeTrim = null;
+    let selectedDate = null;
+    let query = '';
 
     //load and process data
     onMount(async () => {
@@ -17,13 +21,16 @@
             nonIntRev: +d['Non-Interest Income'],
             netInc: +d['Net Income'],
             exp: +d['Non-Interest Expense'],
-            netIntRev: +d['Net Interest Income']
+            netIntRev: +d['Net Interest Income'],
+            date: d['Report Date']
         }));
 
         data = rawData;
         if (rawData.length > 0) {
-            selectedID = rawData[0].id;
-            selectedName = rawData[0].fiName;
+            selectedID = rawData[3].id;
+            selectedName = rawData[3].fiName;
+            [selectedTypeTrim, selectedIDTrim] = rawData[3].id.split("_");
+            selectedDate = rawData[3].date;
             drawChart(selectedID);
             // drawChart('Credit Union_6');
         }
@@ -48,6 +55,8 @@
         if (!record) return;
 
         selectedName = record.fiName;
+        [selectedTypeTrim, selectedIDTrim] = record.id.split("_");
+        selectedDate = record.date;
 
         // //define nodes and links
         // const graph = {
@@ -79,7 +88,7 @@
             { name: 'Non-Interest Revenue' },
             { name: 'Operating Expense' },
             { name: 'Interest Expense'},
-            { name: 'Revenue' },
+            { name: 'Gross Revenue' },
             { name: 'Operating Income'},
             { name: 'Other Expense'},
             { name: 'Net Income' }
@@ -94,11 +103,11 @@
             // { source: 'Operating Income', target: 'Other Expense', value: record.netIntRev + record.nonIntRev - record.exp - record.netInc },
             // { source: 'Operating Income', target: 'Net Income', value: record.netInc }
 
-            { source: 'Interest Revenue', target: 'Revenue', value: record.intRev},
-            { source: 'Non-Interest Revenue', target: 'Revenue', value: record.nonIntRev },
-            { source: 'Revenue', target: 'Interest Expense', value: record.intRev - record.netIntRev},
-            { source: 'Revenue', target: 'Operating Expense', value: record.exp },
-            { source: 'Revenue', target: 'Operating Income', value: record.netIntRev + record.nonIntRev - record.exp },
+            { source: 'Interest Revenue', target: 'Gross Revenue', value: record.intRev},
+            { source: 'Non-Interest Revenue', target: 'Gross Revenue', value: record.nonIntRev },
+            { source: 'Gross Revenue', target: 'Interest Expense', value: record.intRev - record.netIntRev},
+            { source: 'Gross Revenue', target: 'Operating Expense', value: record.exp },
+            { source: 'Gross Revenue', target: 'Operating Income', value: record.netIntRev + record.nonIntRev - record.exp },
             { source: 'Operating Income', target: 'Other Expense', value: record.netIntRev + record.nonIntRev - record.exp - record.netInc },
             { source: 'Operating Income', target: 'Net Income', value: record.netInc }
         ];
@@ -164,13 +173,13 @@
             // }
             if (d.name === 'Operating Income') {
                 // d.x0 = (width / 2) - ((d.x1 - d.x0) / 2);
-                d.x0 = (width * 0.7);
+                d.x0 = (width * 0.65);
                 // d.x1 = d.x0 + (d.x1 - d.x0);
                 d.x1 = d.x0 + 20;
             }
             if (d.name === 'Revenue') {
                 // d.x0 = (width / 2) - ((d.x1 - d.x0) / 2);
-                d.x0 = (width * 0.4);
+                d.x0 = (width * 0.45);
                 // d.x1 = d.x0 + (d.x1 - d.x0);
                 d.x1 = d.x0 + 20;
             }
@@ -266,8 +275,13 @@
 </style>
 
 <div>
-    <p>{selectedName}</p>
+    <p>FI Name: {selectedName}</p>
+    <p>Type: {selectedTypeTrim}</p>
+    <p>Charter/Certificate: {selectedIDTrim}</p>
+    <p>Report Date: YTD {selectedDate}</p>
 </div>
+
+<svg></svg>
 
 <div>
     <label for="idSelect">Select ID:</label>
@@ -278,4 +292,11 @@
     </select>
 </div>
 
-<svg></svg>
+<div>
+    <input 
+        type="search"
+        bind:value="{query}"
+        aria-label="Search FIs"
+        placeholder="FI name/charter/cert..."
+    />
+</div>

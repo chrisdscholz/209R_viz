@@ -1,0 +1,16 @@
+﻿How do financial institutions (FIs) in the United States make money? That is the core question we set out to explore in our final project. To accomplish this, we set out to create a small handful (2-3) interactable visuals with commentary to illustrate and educate on the economics underpinning our nation's financial infrastructure.
+
+
+1. What have we done so far?
+
+
+Thus far, we’ve completed data sourcing and transformation, and made significant progress in creating our d3 visuals, culminating in a working prototype for one of our core visuals. For data sourcing, we created a python script in a jupyter notebook to retrieve FI financial and demographic data from two regulatory body websites - the NCUA and FDIC. The combination of data from these two sources covers all financial institution types in the US (Credit Unions, Banks, and Savings Banks). Our script sources the data and performs myriad transformations to standardize and combine the two datasets, resulting in a combined dataset that contains key financial and demographic metrics for all FIs in the US.
+
+
+We then fed this data into d3 and svelte, and went about creating our visualizations. For our initial prototype visualization, we opted for a sankey visual to illustrate the flow of different revenues, expenses, and income of a given FI. To make this visual interactable, we added a selector element to choose any FI and display the requisite income statement via the sankey format. This prototype was published to the web via svelte and github pages.
+
+
+2. What will be the most challenging part of our project to design/create?
+
+
+There have been and will be several challenging aspects of our project. To start, our project required a significant time investment into data sourcing and transformation, given that our data was not readily usable to start. Next, sankey visuals are inherently difficult to setup and configure, even moreso a sankey visual designed to dynamically display thousands of different records. With what remains left to do, creating the additional visuals (a dynamic grouped bar chart and a dynamic tree map) will certainly be challenging. Finishing up our sankey visual, with clean formatting, styling, and a better query input, will also be significant. In addition to our project writeup and commentary. Overall, we’d estimate that the combination of data sourcing and deploying a sankey visual will end up being the most challenging aspects of our project.
