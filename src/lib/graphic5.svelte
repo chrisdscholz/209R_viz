@@ -24,7 +24,15 @@
             netIntRev: +d['Net Interest Income'],
             date: d['Report Date'],
             intExp: +d['Interest Expense'],
-            othExp: +d['Other Expense']
+            othExp: +d['Other Expense'],
+            cashDep: +d['Cash & Deposits'],
+            invst: +d['Investments'],
+            loanLease: +d['Loans & Leases'],
+            assets: +d['Assets'],
+            otherAsst: +d['Other Assets'],
+            liab: +d['Liabilities'],
+            liabEq: +d['Liabilities & Equity']
+
         }));
 
         data = rawData;
