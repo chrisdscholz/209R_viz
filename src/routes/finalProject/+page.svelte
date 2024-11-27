@@ -1,6 +1,6 @@
 <script>
     import Graphic5 from '$lib/graphic5.svelte';
-    import Graphic4 from '$lib/graphic4.svelte';
+    import Graphic6 from '$lib/graphic6.svelte';
     import Writeup from '$lib/writeupProto.svelte';
 </script>
 
@@ -8,7 +8,7 @@
 <h3>Chris Scholz</h3>
 
 <Graphic5 />
-<Graphic4 />
+<Graphic6 />
 
 <p>Project Github Repo: <a href='https://github.com/chrisdscholz/209R_viz' target="_blank">LINK</a></p>
 
