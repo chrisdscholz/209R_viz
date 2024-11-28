@@ -32,7 +32,8 @@
             otherAsst: +d['Other Assets'],
             liab: +d['Liabilities'],
             liabEq: +d['Liabilities & Equity'],
-            type: d['Charter/Cert'].split("_")[0]
+            type: d['Charter/Cert'].split("_")[0],
+            depAccts: d['Deposit Accounts']
 
         }));
 
@@ -55,35 +56,79 @@
         const width = 1000 - margin.left - margin.right;
         const height = 200 - margin.top - margin.bottom;
 
-        //group by type
+        //group by type for aggregated treemap
         const groupedData = d3.group(data, d => d.type);
-        const hierarchy = {
+        
+        const hierarchyD = {
             name: 'Root',
             children: Array.from(groupedData, ([key, values]) => ({
                 name: key,
                 children: values.map(d => ({
                     name: d.id,
-                    value: d.assets,
+                    value: d.depAccts,
                     type: d.type
                 }))
             }))
         };
 
-        const root = d3.hierarchy(hierarchy)
+        //aggregated data
+        const aggregatedData = Array.from(
+            d3.rollups(
+                data,
+                group => d3.sum(group, d => d.depAccts),
+                d => d.type
+            ),
+            ([type, total]) => ({ name: type, value: total })
+        );
+
+        //selected ID data
+        const selectedRecord = data.find(d => d.id === selectedID);
+
+        //aggregated hierarchy
+        const hierarchyA = {
+            name: 'Root',
+            children: aggregatedData
+        };
+
+        // //selected ID hierarchy
+        // const hierarchyD = {
+        //     name: 'Root',
+        //     children: selectedRecord
+        //         ? [{ name: selectedRecord.id, value: selectedRecord.depAccts }]
+        //         : []
+        // };
+
+        //aggregated root
+        const rootA = d3.hierarchy(hierarchyA)
             .sum(d => d.value || 0)
             .sort((a, b) => b.value - a.value);
 
+        //selected ID root
+        const rootD = d3.hierarchy(hierarchyD)
+            .sum(d => d.value || 0)
+            .sort((a, b) => b.value - a.value);
+
+        //base treemmap
         const treemapLayout = d3.treemap()
             .size([width, height])
             .tile(d3.treemapDice)
             .padding(0);
         
-        treemapLayout(root);
+        //treemaps for aggregated and selected ID
+        treemapLayout(rootA);
+        treemapLayout(rootD);
 
         //color scale
+        // const typeColorScale = d3.scaleOrdinal()
+        //     .domain(Array.from(groupedData.keys()))
+        //     .range(d3.schemeObservable10);
+
+        //colors
         const typeColorScale = d3.scaleOrdinal()
-            .domain(Array.from(groupedData.keys()))
+            .domain(aggregatedData.map(d => d.name))
             .range(d3.schemeObservable10);
+
+        const highlightC = 'grey';
 
         //clear previous visual
         d3.select('#treemap').selectAll('*').remove();
@@ -94,20 +139,56 @@
             .attr('width', width)
             .attr('height', height);
 
-        //draw rectangles
-        const nodes = svg.selectAll('g')
-            .data(root.leaves())
-            .join('g')
-            .attr('transform', d => `translate(${d.x0},${d.y0})`);
-        
-        nodes.append('rect')
+        // svg = d3.select('#treemap')
+        //     .append('svg')
+        //     .attr('width', width)
+        //     .attr('height', height);
+
+        //draw aggregated treemap
+        const aggregatedNodes = svg.append('g')
+            .selectAll('rect')
+            .data(rootA.leaves())
+            .join('rect')
+            .attr('x', d => d.x0)
+            .attr('y', d => d.y0)
             .attr('width', d => d.x1 - d.x0)
             .attr('height', d => d.y1 - d.y0)
-            .attr('fill', d =>
-                d.data.name === selectedID
-                    ? 'green'
-                    : typeColorScale(d.data.type))
+            .attr('fill', d => typeColorScale(d.data.name))
             .attr('stroke', 'none');
+
+        //draw selected ID
+        const detailedNodes = svg.append('g')
+            .selectAll('rect')
+            .data(rootD.leaves())
+            .join('rect')
+            .attr('x', d => d.x0)
+            .attr('y', d => d.y0)
+            .attr('width', d => d.x1 - d.x0)
+            .attr('height', d => d.y1 - d.y0)
+            .attr('fill', d => (d.data.name === selectedID ? highlightC : 'none'))
+            .attr('stroke', highlightC)
+            .attr('stroke-width', 2)
+            .attr('opacity', d => (d.data.name === selectedID ? 1 : 0));
+
+
+        // //draw rectangles
+        // const nodes = svg.selectAll('g')
+        //     .data(rootA.leaves())
+        //     .join('g')
+        //     .attr('transform', d => `translate(${d.x0},${d.y0})`);
+        
+        // nodes.append('rect')
+        //     .attr('width', d => d.x1 - d.x0)
+        //     .attr('height', d => d.y1 - d.y0)
+        //     .attr('fill', d =>
+        //         d.data.name === selectedID
+        //             ? 'green'
+        //             : typeColorScale(d.data.name))
+        //             // : typeColorScale(d.data.type))
+        //             // : 'none')
+        //     // .attr('stroke', 'none');
+        //     .attr('stroke', d => d.data.name === selectedID ? 'green' : 'none')
+        //     .attr('stroke-width', d => d.data.name === selectedID ? 1 : 0);
 
         // //add labels
         // nodes.append('text')
