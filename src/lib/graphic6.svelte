@@ -84,7 +84,7 @@
 
         const color = d3.scaleOrdinal()
             .domain(bars.map(d => d.name))
-            .range(d3.schemeCategory10);
+            .range(d3.schemeObservable10);
         
         //create svg
         svg = d3.select('#chart')
