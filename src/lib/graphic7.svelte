@@ -4,6 +4,7 @@
 
     //variable definition
     let data = [];
+    let filteredData = [];
     let selectedID = null;
     let selectedName = null;
     let selectedIDTrim = null;
@@ -38,6 +39,7 @@
         }));
 
         data = rawData;
+        filteredData = rawData;
         if (rawData.length > 0) {
             selectedID = rawData[3].id;
             selectedName = rawData[3].fiName;
@@ -46,14 +48,23 @@
             drawChart(selectedID);
         }
 
-        console.log(data.map(d => d.type));
     });
+
+    $: filteredData = data.filter(d => 
+        d.id.toLowerCase().includes(query.toLowerCase()) ||
+        d.fiName.toLowerCase().includes(query.toLowerCase())
+    );
+
+    $: if (filteredData.length > 0) {
+        selectedID = filteredData[0].id;
+        drawChart(selectedID);
+    }
 
     function drawChart() {
 
         //visual size
         const margin = {top: 40, right: 30, bottom: 100, left: 80};
-        const width = 1000 - margin.left - margin.right;
+        const width = 1600 - margin.left - margin.right;
         const height = 200 - margin.top - margin.bottom;
 
         //group by type for aggregated treemap
@@ -90,14 +101,6 @@
             children: aggregatedData
         };
 
-        // //selected ID hierarchy
-        // const hierarchyD = {
-        //     name: 'Root',
-        //     children: selectedRecord
-        //         ? [{ name: selectedRecord.id, value: selectedRecord.depAccts }]
-        //         : []
-        // };
-
         //aggregated root
         const rootA = d3.hierarchy(hierarchyA)
             .sum(d => d.value || 0)
@@ -118,17 +121,12 @@
         treemapLayout(rootA);
         treemapLayout(rootD);
 
-        //color scale
-        // const typeColorScale = d3.scaleOrdinal()
-        //     .domain(Array.from(groupedData.keys()))
-        //     .range(d3.schemeObservable10);
-
         //colors
         const typeColorScale = d3.scaleOrdinal()
             .domain(aggregatedData.map(d => d.name))
             .range(d3.schemeObservable10);
 
-        const highlightC = 'grey';
+        const highlightC = 'green';
 
         //clear previous visual
         d3.select('#treemap').selectAll('*').remove();
@@ -138,11 +136,6 @@
             .append('svg')
             .attr('width', width)
             .attr('height', height);
-
-        // svg = d3.select('#treemap')
-        //     .append('svg')
-        //     .attr('width', width)
-        //     .attr('height', height);
 
         //draw aggregated treemap
         const aggregatedNodes = svg.append('g')
@@ -169,34 +162,6 @@
             .attr('stroke', highlightC)
             .attr('stroke-width', 2)
             .attr('opacity', d => (d.data.name === selectedID ? 1 : 0));
-
-
-        // //draw rectangles
-        // const nodes = svg.selectAll('g')
-        //     .data(rootA.leaves())
-        //     .join('g')
-        //     .attr('transform', d => `translate(${d.x0},${d.y0})`);
-        
-        // nodes.append('rect')
-        //     .attr('width', d => d.x1 - d.x0)
-        //     .attr('height', d => d.y1 - d.y0)
-        //     .attr('fill', d =>
-        //         d.data.name === selectedID
-        //             ? 'green'
-        //             : typeColorScale(d.data.name))
-        //             // : typeColorScale(d.data.type))
-        //             // : 'none')
-        //     // .attr('stroke', 'none');
-        //     .attr('stroke', d => d.data.name === selectedID ? 'green' : 'none')
-        //     .attr('stroke-width', d => d.data.name === selectedID ? 1 : 0);
-
-        // //add labels
-        // nodes.append('text')
-        //     .attr('x', 5)
-        //     .attr('y', 15)
-        //     .text(d => d.data.name)
-        //     .style('font-size', '10px')
-        //     .style('fill', 'black');
     }
 
     //redraw when selectedID changes
@@ -214,4 +179,13 @@
             <option value={id}>{id}</option>
         {/each}
     </select>
+</div>
+
+<div>
+    <input 
+        type="search"
+        bind:value="{query}"
+        aria-label="Search FIs"
+        placeholder="FI name/charter/cert..."
+    />
 </div>

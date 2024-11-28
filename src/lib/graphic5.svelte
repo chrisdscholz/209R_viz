@@ -5,6 +5,7 @@
 
     //variable definition
     let data = [];
+    let filteredData = [];
     let selectedID = null;
     let selectedName = null;
     let selectedIDTrim = null;
@@ -36,6 +37,7 @@
         }));
 
         data = rawData;
+        filteredData = rawData;
         if (rawData.length > 0) {
             selectedID = rawData[3].id;
             selectedName = rawData[3].fiName;
@@ -50,6 +52,16 @@
 
         // console.log(rawData);
     });
+
+    $: filteredData = data.filter(d => 
+        d.id.toLowerCase().includes(query.toLowerCase()) ||
+        d.fiName.toLowerCase().includes(query.toLowerCase())
+    );
+
+    $: if (filteredData.length > 0) {
+        selectedID = filteredData[0].id;
+        drawChart(selectedID);
+    }
 
     function drawChart(id) {
         // //clear previous visual
@@ -302,11 +314,11 @@
     </select>
 </div>
 
-<!-- <div>
+<div>
     <input 
         type="search"
         bind:value="{query}"
         aria-label="Search FIs"
         placeholder="FI name/charter/cert..."
     />
-</div> -->
+</div>
