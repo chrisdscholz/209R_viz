@@ -76,7 +76,7 @@
             { name: 'Cash & Deposits', value: record.cashDep },
             { name: 'Investments', value: record.invst },
             { name: 'Loans & Leases', value: record.loanLease },
-            { name: 'Otehr Assets', value: record.otherAsst },
+            { name: 'Other Assets', value: record.otherAsst },
             { name: 'Liabilities', value: record.liab}
         ];
 
