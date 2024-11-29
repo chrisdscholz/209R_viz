@@ -141,23 +141,23 @@
     }
 </script>
 
-<div>
+<!-- <div>
     <p>FI Name: {selectedName}</p>
     <p>Type: {selectedTypeTrim}</p>
     <p>Charter/Certificate: {selectedIDTrim}</p>
     <p>Report Date: YTD {selectedDate}</p>
-</div>
+</div> -->
 
 <div id="chart"></div>
 
-<div>
+<!-- <div>
     <label for="idSelect">Select ID:</label>
     <select id="idSelect" bind:value={selectedID} on:change={() => drawChart(selectedID)}>
         {#each data as { id }}
             <option value={id}>{id}</option>
         {/each}
     </select>
-</div>
+</div> -->
 
 <!-- <div>
     <input 

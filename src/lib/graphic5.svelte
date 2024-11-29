@@ -7,11 +7,13 @@
     let data = [];
     let filteredData = [];
     let selectedID = null;
-    let selectedName = null;
-    let selectedIDTrim = null;
-    let selectedTypeTrim = null;
-    let selectedDate = null;
+    export let selectedName = null;
+    export let selectedIDTrim = null;
+    export let selectedTypeTrim = null;
+    export let selectedDate = null;
     export let query = '';
+
+    export let onUpdate;
 
     //load and process data
     onMount(async () => {
@@ -32,7 +34,9 @@
             assets: +d['Assets'],
             otherAsst: +d['Other Assets'],
             liab: +d['Liabilities'],
-            liabEq: +d['Liabilities & Equity']
+            liabEq: +d['Liabilities & Equity'],
+            type: d['Charter/Cert'].split("_")[0],
+            idNum: d['Charter/Cert'].split("_")[1]
 
         }));
 
@@ -61,6 +65,7 @@
     $: if (filteredData.length > 0) {
         selectedID = filteredData[0].id;
         drawChart(selectedID);
+        onUpdate(filteredData[0]);
     }
 
     function drawChart(id) {
@@ -160,12 +165,13 @@
             link.target = nodes.findIndex(d => d.name === link.target);
         })
 
-        const svg = d3.select('svg')
+        //clear previous visual
+        d3.select('#chart2').selectAll('*').remove();
+
+        const svg = d3.select('#chart2')
+            .append('svg')
             .attr('width', width)
             .attr('height', height);
-
-        //clear previous visual
-        svg.selectAll('*').remove();
 
         //define sankey generator
         const sankeyGenerator = sankey()
@@ -296,23 +302,25 @@
     }
 </style>
 
-<div>
+<!-- <div>
     <p>FI Name: {selectedName}</p>
     <p>Type: {selectedTypeTrim}</p>
     <p>Charter/Certificate: {selectedIDTrim}</p>
     <p>Report Date: YTD {selectedDate}</p>
-</div>
+</div> -->
 
-<svg></svg>
+<!-- <svg></svg> -->
 
-<div>
+<div id="chart2"></div>
+
+<!-- <div>
     <label for="idSelect">Select ID:</label>
     <select id="idSelect" bind:value={selectedID} on:change={() => drawChart(selectedID)}>
         {#each data as { id }}
             <option value={id}>{id}</option>
         {/each}
     </select>
-</div>
+</div> -->
 
 <!-- <div>
     <input 

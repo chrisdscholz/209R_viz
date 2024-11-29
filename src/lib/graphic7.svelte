@@ -172,14 +172,14 @@
 
 <div id="treemap"></div>
 
-<div>
+<!-- <div>
     <label for="idSelect">Select ID:</label>
     <select id="idSelect" bind:value={selectedID} on:change={() => drawChart(selectedID)}>
         {#each data as { id }}
             <option value={id}>{id}</option>
         {/each}
     </select>
-</div>
+</div> -->
 
 <!-- <div>
     <input 
