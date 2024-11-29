@@ -10,7 +10,7 @@
     let selectedIDTrim = null;
     let selectedTypeTrim = null;
     let selectedDate = null;
-    let query = '';
+    export let query = '';
     let svg;
 
     //load and process data
@@ -181,11 +181,11 @@
     </select>
 </div>
 
-<div>
+<!-- <div>
     <input 
         type="search"
         bind:value="{query}"
         aria-label="Search FIs"
         placeholder="FI name/charter/cert..."
     />
-</div>
+</div> -->

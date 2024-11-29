@@ -11,7 +11,7 @@
     let selectedIDTrim = null;
     let selectedTypeTrim = null;
     let selectedDate = null;
-    let query = '';
+    export let query = '';
 
     //load and process data
     onMount(async () => {
@@ -314,11 +314,11 @@
     </select>
 </div>
 
-<div>
+<!-- <div>
     <input 
         type="search"
         bind:value="{query}"
         aria-label="Search FIs"
         placeholder="FI name/charter/cert..."
     />
-</div>
+</div> -->
