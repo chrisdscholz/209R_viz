@@ -37,11 +37,29 @@
     <p>Report Date: YTD {displayData.date}</p>
 </div>
 
-<Graphic7 {query} onUpdate={updateData} />
+<!-- <Graphic7 {query} onUpdate={updateData} /> -->
 
-<Graphic5 {query} onUpdate={updateData}/>
+<!-- <Graphic5 {query} onUpdate={updateData}/>
 
-<Graphic6 {query} onUpdate={updateData}/>
+<Graphic6 {query} onUpdate={updateData}/> -->
+
+<div class="graphics-container1">
+    <div>
+        <p>Accounts</p>
+        <Graphic7 {query} onUpdate={updateData} />
+    </div>
+</div>
+
+<div class="graphics-container2">
+    <div>
+        <p>Sankey</p>
+        <Graphic5 {query} onUpdate={updateData}/>
+    </div>
+    <div>
+        <p>Bar</p>
+        <Graphic6 {query} onUpdate={updateData}/>
+    </div>
+</div>
 
 <!-- <Graphic7 {query} /> -->
 
@@ -52,6 +70,7 @@
 <style>
     #info {
         width: 100%;
+        max-width: 1620px;
         display: flex;
         flex-direction: row;
         gap: 10px;
@@ -80,5 +99,34 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         box-sizing: border-box;
+    }
+
+    .graphics-container1 {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        justify-content: left;
+        align-items: flex-start;
+    }
+
+    .graphics-container2 {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        justify-content: left;
+        align-items: flex-start;
+    }
+
+    .graphics-container1 p,
+    .graphics-container2 p {
+        font-weight: bold;
+        text-align: center;
+        background-color: #f1f1f1;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        color: #333;
+        padding: 5px;
     }
 </style>

@@ -64,7 +64,7 @@
 
         //visual size
         const margin = {top: 40, right: 30, bottom: 100, left: 80};
-        const width = 1600 - margin.left - margin.right;
+        const width = 1725 - margin.left - margin.right;
         const height = 200 - margin.top - margin.bottom;
 
         //group by type for aggregated treemap

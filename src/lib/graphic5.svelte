@@ -73,9 +73,9 @@
         // svg.selectAll('*').remove;
 
         //visual size
-        const margin = {top: 40, right: 30, bottom: 100, left: 80};
-        const width = 1000 - margin.left - margin.right;
-        const height = 700 - margin.top - margin.bottom;
+        const margin = {top: 0, right: 0, bottom: 0, left: 0};
+        const width = 800 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
 
         //filter selected id
         const record = data.find(d => d.id === id);
@@ -170,8 +170,10 @@
 
         const svg = d3.select('#chart2')
             .append('svg')
-            .attr('width', width)
-            .attr('height', height);
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom);
+            // .attr('transform', `translate(${margin.left}, ${margin.top})`)
+            // .style('border', '1px solid red');
 
         //define sankey generator
         const sankeyGenerator = sankey()
@@ -249,6 +251,9 @@
             link.gradientId = gradientId;
     });
 
+        // const chartGroup = svg.append('g')
+        //     .attr('transform', `translate(${margin.left}, ${margin.top})`);
+
         //draw links
         svg.append('g')
             .selectAll('path')
@@ -286,14 +291,23 @@
             .attr('text-anchor', 'end')
             .attr('font-size', '12px')
             .attr('fill', '#000')
-            .text(d => d.name)
+            .text(d => d.name + ": $" + d.value)
             .filter(d => d.x0 < width / 2)
             .attr('x', d => d.x1 + 6)
             .attr('text-anchor', 'start');
+
+        // //add title
+        // svg.append('text')
+        //     .attr('x', (width + margin.left + margin.right) / 2)
+        //     .attr('y', margin.top / 4)
+        //     .attr('text-anchor', 'middle')
+        //     .attr('font-size', '16px')
+        //     .attr('font-weight', 'bold')
+        //     .text('Sankey');
+
+        // const chartGroup = svg.append('g')
+        //     .attr('transform', `translate(${margin.left}, ${margin.top})`);
     }
-
-
-
 </script>
 
 <style>

@@ -61,8 +61,8 @@
 
         //visual size
         const margin = {top: 40, right: 30, bottom: 100, left: 80};
-        const width = 1000 - margin.left - margin.right;
-        const height = 700 - margin.top - margin.bottom;
+        const width = 800 - margin.left - margin.right;
+        const height = 500 - margin.top - margin.bottom;
 
         //filter selected id
         const record = data.find(d => d.id === id);
