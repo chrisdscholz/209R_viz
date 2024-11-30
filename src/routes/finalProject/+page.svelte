@@ -24,7 +24,6 @@
     <input 
         type="search"
         bind:value="{query}"
-        on:change={updateLabels()}
         aria-label="Search FIs"
         placeholder="FI name/charter/cert..."
     />

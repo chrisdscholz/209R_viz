@@ -32,7 +32,8 @@
             assets: +d['Assets'],
             otherAsst: +d['Other Assets'],
             liab: +d['Liabilities'],
-            liabEq: +d['Liabilities & Equity']
+            liabEq: +d['Liabilities & Equity'],
+            depAccts: +d['Deposit Accounts']
 
         }));
 
@@ -52,8 +53,18 @@
         d.fiName.toLowerCase().includes(query.toLowerCase())
     );
 
+    // $: if (filteredData.length > 0) {
+    //     selectedID = filteredData[0].id;
+    //     drawChart(selectedID);
+    // }
+
     $: if (filteredData.length > 0) {
-        selectedID = filteredData[0].id;
+        const maxRecord = filteredData.reduce((max, record) =>
+            record.depAccts > max.depAccts ? record : max
+        );
+
+        selectedID = maxRecord.id;
+
         drawChart(selectedID);
     }
 
