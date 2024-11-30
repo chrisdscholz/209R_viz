@@ -57,12 +57,19 @@
         drawChart(selectedID);
     }
 
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    });
+
     function drawChart(id) {
 
         //visual size
-        const margin = {top: 40, right: 30, bottom: 100, left: 80};
+        const margin = {top: 10, right: 0, bottom: 20, left: 0};
         const width = 800 - margin.left - margin.right;
-        const height = 500 - margin.top - margin.bottom;
+        const height = 450 - margin.top - margin.bottom;
 
         //filter selected id
         const record = data.find(d => d.id === id);
@@ -111,12 +118,12 @@
             .attr('transform', `translate(0,${height})`)
             .call(d3.axisBottom(x))
             .selectAll('text')
-            .attr('transform', 'rotate(-45)')
-            .style('text-anchor', 'end');
+            // .attr('transform', 'rotate(-45)')
+            .style('text-anchor', 'center');
 
-        //add y axis
-        svg.append('g')
-            .call(d3.axisLeft(y));
+        // //add y axis
+        // svg.append('g')
+        //     .call(d3.axisLeft(y));
 
         //draw bars
         svg.selectAll('.bar')
@@ -137,7 +144,7 @@
             .attr('x', d => x(d.name) + x.bandwidth() / 2)
             .attr('y', d => y(d.value) - 5)
             .attr('text-anchor', 'middle')
-            .text(d => d.value.toFixed(2));
+            .text(d => formatter.format(d.value));
     }
 </script>
 

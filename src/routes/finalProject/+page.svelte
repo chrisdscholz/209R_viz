@@ -17,7 +17,7 @@
     }
 </script>
 
-<h3>DSC209R Final Project</h3>
+<h3>DSC209R Final Project {displayData.date}</h3>
 <h3>Chris Scholz</h3>
 
 <div>
@@ -34,7 +34,7 @@
     <p>FI Name: {displayData.fiName}</p>
     <p>Type: {displayData.type}</p>
     <p>Charter/Certificate: {displayData.idNum}</p>
-    <p>Report Date: YTD {displayData.date}</p>
+    <p>Accounts: {new Intl.NumberFormat().format(displayData.depAccts)}</p>
 </div>
 
 <!-- <Graphic7 {query} onUpdate={updateData} /> -->
@@ -45,18 +45,18 @@
 
 <div class="graphics-container1">
     <div>
-        <p>Accounts</p>
+        <p>Number of Accounts Compared to Full Market</p>
         <Graphic7 {query} onUpdate={updateData} />
     </div>
 </div>
 
 <div class="graphics-container2">
     <div>
-        <p>Sankey</p>
+        <p>Income Flow (in millions $)</p>
         <Graphic5 {query} onUpdate={updateData}/>
     </div>
     <div>
-        <p>Bar</p>
+        <p>Key Balance Sheet Metrics (in millions $)</p>
         <Graphic6 {query} onUpdate={updateData}/>
     </div>
 </div>

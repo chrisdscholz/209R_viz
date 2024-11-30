@@ -63,9 +63,9 @@
     function drawChart() {
 
         //visual size
-        const margin = {top: 40, right: 30, bottom: 100, left: 80};
-        const width = 1725 - margin.left - margin.right;
-        const height = 200 - margin.top - margin.bottom;
+        const margin = {top: 20, right: 0, bottom: 30, left: 0};
+        const width = 1620 - margin.left - margin.right;
+        const height = 115 - margin.top - margin.bottom;
 
         //group by type for aggregated treemap
         const groupedData = d3.group(data, d => d.type);
@@ -126,7 +126,7 @@
             .domain(aggregatedData.map(d => d.name))
             .range(d3.schemeObservable10);
 
-        const highlightC = 'green';
+        const highlightC = 'yellow';
 
         //clear previous visual
         d3.select('#treemap').selectAll('*').remove();
@@ -134,8 +134,8 @@
         //create svg
         svg = d3.select('#treemap')
             .append('svg')
-            .attr('width', width)
-            .attr('height', height);
+            .attr('width', width + margin.right + margin.left)
+            .attr('height', height + margin.top + margin.bottom);
 
         //draw aggregated treemap
         const aggregatedNodes = svg.append('g')
@@ -162,6 +162,44 @@
             .attr('stroke', highlightC)
             .attr('stroke-width', 2)
             .attr('opacity', d => (d.data.name === selectedID ? 1 : 0));
+
+        //add legend
+        addLegend(svg, typeColorScale, rootA.children.map(d => d.data.name), width, margin);
+    }
+
+    //legend function
+    function addLegend(svg, colorScale, categories, width, margin) {
+        const legend = svg.append('g')
+            .attr('class', 'legend')
+            .attr('transform', `translate(${margin.left}, ${margin.top + 50})`)
+
+        const boxWidth = 300;
+        const boxHeight = 30;
+        const boxSpacing = 0;
+        
+        categories.forEach((category, i) => {
+            const xOffset = i * (boxWidth + boxSpacing);
+
+            const legendItem = legend.append('g')
+                .attr('transform', `translate(${xOffset}, 5)`);
+        
+            //color swatch
+            legendItem.append('rect')
+                .attr('width', boxWidth)
+                .attr('height', boxHeight)
+                .attr('fill', colorScale(category));
+
+            //label
+            legendItem.append('text')
+                .attr('x', boxWidth / 2)
+                .attr('y', boxHeight / 2)
+                .attr('dy', '0.35em')
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '12px')
+                .attr('fill', '#fff')
+                .attr('font-weight', 'bold')
+                .text(category);
+        });
     }
 
     //redraw when selectedID changes

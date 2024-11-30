@@ -36,7 +36,8 @@
             liab: +d['Liabilities'],
             liabEq: +d['Liabilities & Equity'],
             type: d['Charter/Cert'].split("_")[0],
-            idNum: d['Charter/Cert'].split("_")[1]
+            idNum: d['Charter/Cert'].split("_")[1],
+            depAccts: d['Deposit Accounts']
 
         }));
 
@@ -68,6 +69,13 @@
         onUpdate(filteredData[0]);
     }
 
+    const formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    });
+
     function drawChart(id) {
         // //clear previous visual
         // svg.selectAll('*').remove;
@@ -75,7 +83,7 @@
         //visual size
         const margin = {top: 0, right: 0, bottom: 0, left: 0};
         const width = 800 - margin.left - margin.right;
-        const height = 500 - margin.top - margin.bottom;
+        const height = 450 - margin.top - margin.bottom;
 
         //filter selected id
         const record = data.find(d => d.id === id);
@@ -291,7 +299,7 @@
             .attr('text-anchor', 'end')
             .attr('font-size', '12px')
             .attr('fill', '#000')
-            .text(d => d.name + ": $" + d.value)
+            .text(d => d.name + ": " + formatter.format(d.value))
             .filter(d => d.x0 < width / 2)
             .attr('x', d => d.x1 + 6)
             .attr('text-anchor', 'start');
