@@ -136,7 +136,7 @@
             .domain(aggregatedData.map(d => d.name))
             .range(d3.schemeObservable10);
 
-        const highlightC = 'yellow';
+        const highlightC = d3.schemeObservable10[6];
 
         //clear previous visual
         d3.select('#treemap').selectAll('*').remove();

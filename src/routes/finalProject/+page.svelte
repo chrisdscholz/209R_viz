@@ -64,8 +64,6 @@
 
 <p>Project Github Repo: <a href='https://github.com/chrisdscholz/209R_viz' target="_blank">LINK</a></p>
 
-<Writeup />
-
 <style>
     #info {
         width: 100%;
