@@ -17,15 +17,14 @@
     }
 </script>
 
-<h3>DSC209R Final Project {displayData.date}</h3>
-<h3>Chris Scholz</h3>
+<h3>Chris Scholz, DSC209R Final Project: Financial Insitution Research Tool</h3>
 
 <div>
     <input 
         type="search"
         bind:value="{query}"
         aria-label="Search FIs"
-        placeholder="FI name/charter/cert..."
+        placeholder="Type in any FI name..."
     />
 </div>
 
@@ -34,6 +33,7 @@
     <p>Type: {displayData.type}</p>
     <p>Charter/Certificate: {displayData.idNum}</p>
     <p>Accounts: {new Intl.NumberFormat().format(displayData.depAccts)}</p>
+    <p>Report Date: {displayData.date}</p>
 </div>
 
 <!-- <Graphic7 {query} onUpdate={updateData} /> -->
@@ -93,9 +93,10 @@
         max-width: 400px;
         padding: 10px;
         font-size: 16px;
-        border: 1px solid #ccc;
+        border: 2px solid red;
         border-radius: 5px;
         box-sizing: border-box;
+        font-weight: bold;
     }
 
     .graphics-container1 {
