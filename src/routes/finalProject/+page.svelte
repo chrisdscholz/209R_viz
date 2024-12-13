@@ -62,6 +62,7 @@
 
 <!-- <Graphic7 {query} /> -->
 
+<p>Demo Video: <a href='https://youtu.be/WLsZbcDuMKY?si=mUxHMwkgN_8p7dFA' target="_blank">LINK</a></p>
 <p>Project Github Repo: <a href='https://github.com/chrisdscholz/209R_viz' target="_blank">LINK</a></p>
 
 <style>
